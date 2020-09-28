@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 import SearchForm from '../../components/SearchForm/SearchForm';
 import Recipe from '../../components/Recipe/Recipe';
+import Spinner from '../../components/Spinner/Spinner';
+import Pagination from '../../components/Pagination/Pagination';
 import styles from './Search.module.css';
 
 const Search = () => {
@@ -9,17 +11,30 @@ const Search = () => {
 
     const [recipes, setRecipes] = useState([]);
     const [input, setInput] = useState('');
-    const [query, setQuery] = useState('pasta');
+    const [query, setQuery] = useState('');
+
+    const [loading, setLoading] = useState(false);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [recipesPerPage, setRecipesPerPage] = useState(10);
 
     useEffect(() => {
-        getRecipes();
+        if (query !== '') {
+            getRecipes();
+        }
     }, [query]);
 
+    const indexOfLastRecipe = currentPage * recipesPerPage;
+    const indexOfFirstRecipe = indexOfLastRecipe - recipesPerPage;
+    const currentRecipes = recipes.slice(indexOfFirstRecipe, indexOfLastRecipe);
+
     const getRecipes = async () => {
+        setLoading(true);
         const response = await fetch(
-            `https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}&query=${query}&number=400`
+            `https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}&query=${query}&number=83`
         );
         const data = await response.json();
+        setLoading(false);
         setRecipes(data.results);
     };
 
@@ -34,14 +49,28 @@ const Search = () => {
         setInput('');
     };
 
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     return (
         <>
             <SearchForm getInput={getInput} updateInput={updateInput} input={input} />
-            <div className={styles.recipes}>
-                {recipes.map((recipe) => (
-                    <Recipe key={recipe.id} img={recipe.image} title={recipe.title} />
-                ))}
-            </div>
+            {loading ? (
+                <Spinner />
+            ) : (
+                <>
+                    <div className={styles.recipes}>
+                        {currentRecipes.map((recipe) => (
+                            <Recipe key={recipe.id} img={recipe.image} title={recipe.title} />
+                        ))}
+                    </div>
+                    <Pagination
+                        recipesPerPage={recipesPerPage}
+                        totalRecipes={recipes.length}
+                        paginate={paginate}
+                        currentPage={currentPage}
+                    />
+                </>
+            )}
         </>
     );
 };
