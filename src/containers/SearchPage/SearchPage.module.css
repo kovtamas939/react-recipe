@@ -1,0 +1,9 @@
+.recipes {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.recipes a {
+    color: #222;
+    text-decoration: none;
+}

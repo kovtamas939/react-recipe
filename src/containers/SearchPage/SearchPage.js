@@ -4,7 +4,7 @@ import SearchForm from '../../components/SearchForm/SearchForm';
 import Recipe from '../../components/Recipe/Recipe';
 import Spinner from '../../components/Spinner/Spinner';
 import Pagination from '../../components/Pagination/Pagination';
-import styles from './Search.module.css';
+import styles from './SearchPage.module.css';
 
 const Search = () => {
     const API_KEY = 'fd7634aaee9240b7916fc0eefc0d7065';
@@ -40,7 +40,6 @@ const Search = () => {
 
     const updateInput = (e) => {
         setInput(e.target.value);
-        console.log(input);
     };
 
     const getInput = (e) => {
@@ -60,7 +59,7 @@ const Search = () => {
                 <>
                     <div className={styles.recipes}>
                         {currentRecipes.map((recipe) => (
-                            <Recipe key={recipe.id} img={recipe.image} title={recipe.title} />
+                            <Recipe key={recipe.id} id={recipe.id} img={recipe.image} title={recipe.title} />
                         ))}
                     </div>
                     <Pagination
